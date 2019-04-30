@@ -26,6 +26,7 @@
 #'                 a kinase must have to be included in the bar plot output
 #' @param p.cutoff a numeric value between 0 and 1 indicating the p-value cutoff for
 #'                 indicating significant kinases in the bar plot
+#' @param output_dir a directory to deposit results in (if other than working dir)
 #'
 #' @return creates the following outputs that are deposited into your working directory: 
 #'         a bar plot highlighting key kinase results, a .csv file of all KSEA kinase scores, 
@@ -65,7 +66,7 @@
 # - FC = the fold change (not log-transformed); usually recommended to have the control sample as the denominator
 #----------------------------#
 
-KSEA.Complete = function (KSData, PX, NetworKIN, NetworKIN.cutoff, m.cutoff, p.cutoff){
+KSEA.Complete = function (KSData, PX, NetworKIN, NetworKIN.cutoff, m.cutoff, p.cutoff, output_dir=FALSE){
   
   #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#
   # Process the input data files
@@ -168,7 +169,14 @@ KSEA.Complete = function (KSData, PX, NetworKIN, NetworKIN.cutoff, m.cutoff, p.c
   Mean.FC.filtered[(Mean.FC.filtered$p.value < p.cutoff)&(Mean.FC.filtered$z.score < 0),ncol(Mean.FC.filtered)] = "blue"
   Mean.FC.filtered[(Mean.FC.filtered$p.value < p.cutoff)&(Mean.FC.filtered$z.score > 0),ncol(Mean.FC.filtered)] = "red"
   
-  tiff("KSEA Bar Plot.tiff",    
+  if(class(output_dir)!=logical & dir.exists(output_dir){ 
+    output_filename <- file.path(output_dir, "KSEA Bar Plot.tiff")
+  } else { 
+    output_filename <- "KSEA Bar Plot.tiff" 
+    output_dir <- FALSE
+  }
+                                            
+  tiff(output_filename,    
        width = 6*300,        
        height = 300*plot.height,
        res = 300, # 300 pixels per inch
@@ -184,8 +192,21 @@ KSEA.Complete = function (KSData, PX, NetworKIN, NetworKIN.cutoff, m.cutoff, p.c
   #----------------
   # Create tables
   
-  write.csv(KSData.dataset.abbrev, file="Kinase-Substrate Links.csv", quote=F, row.names=F)
-  write.csv(Mean.FC[order(Mean.FC$Kinase.Gene),-ncol(Mean.FC)], file="KSEA Kinase Scores.csv", quote=F, row.names=F)
+  if(class(output_dir)!=logical & dir.exists(output_dir){ 
+    output_filename <- file.path(output_dir, "Kinase-Substrate Links.csv")
+  } else { 
+    output_filename <- "Kinase-Substrate Links.csv" 
+    output_dir <- FALSE
+  }  
+  write.csv(KSData.dataset.abbrev, file=output_filename, quote=F, row.names=F)
+     
+  if(class(output_dir)!=logical & dir.exists(output_dir){ 
+    output_filename <- file.path(output_dir, "KSEA Kinase Scores.csv")
+  } else { 
+    output_filename <- "KSEA Kinase Scores.csv" 
+    output_dir <- FALSE
+  }
+  write.csv(Mean.FC[order(Mean.FC$Kinase.Gene),-ncol(Mean.FC)], file=output_filename, quote=F, row.names=F)
   
 }
 
