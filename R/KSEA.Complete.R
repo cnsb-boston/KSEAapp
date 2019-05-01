@@ -170,7 +170,7 @@ KSEA.Complete = function (KSData, PX, NetworKIN, NetworKIN.cutoff, m.cutoff, p.c
   Mean.FC.filtered[(Mean.FC.filtered$p.value < p.cutoff)&(Mean.FC.filtered$z.score > 0),ncol(Mean.FC.filtered)] = "red"
   
   if(class(output_dir)!="logical"){
-    if(!dir.exists(output_dir) { output_dir <- FALSE }
+    if(!dir.exists(output_dir) ){ output_dir <- FALSE }
   }
   if(class(output_dir)!="logical"){ 
     output_filename <- file.path(output_dir, "KSEA Bar Plot.tiff")
