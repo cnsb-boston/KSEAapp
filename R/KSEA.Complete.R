@@ -169,11 +169,13 @@ KSEA.Complete = function (KSData, PX, NetworKIN, NetworKIN.cutoff, m.cutoff, p.c
   Mean.FC.filtered[(Mean.FC.filtered$p.value < p.cutoff)&(Mean.FC.filtered$z.score < 0),ncol(Mean.FC.filtered)] = "blue"
   Mean.FC.filtered[(Mean.FC.filtered$p.value < p.cutoff)&(Mean.FC.filtered$z.score > 0),ncol(Mean.FC.filtered)] = "red"
   
-  if(class(output_dir)!=logical & dir.exists(output_dir)){ 
+  if(class(output_dir)!="logical"){
+    if(!dir.exists(output_dir) { output_dir <- FALSE }
+  }
+  if(class(output_dir)!="logical"){ 
     output_filename <- file.path(output_dir, "KSEA Bar Plot.tiff")
   } else { 
     output_filename <- "KSEA Bar Plot.tiff" 
-    output_dir <- FALSE
   }
                                             
   tiff(output_filename,    
@@ -192,19 +194,17 @@ KSEA.Complete = function (KSData, PX, NetworKIN, NetworKIN.cutoff, m.cutoff, p.c
   #----------------
   # Create tables
   
-  if(class(output_dir)!=logical & dir.exists(output_dir)){ 
+  if(class(output_dir)!="logical"){ 
     output_filename <- file.path(output_dir, "Kinase-Substrate Links.csv")
   } else { 
     output_filename <- "Kinase-Substrate Links.csv" 
-    output_dir <- FALSE
   }  
   write.csv(KSData.dataset.abbrev, file=output_filename, quote=F, row.names=F)
      
-  if(class(output_dir)!=logical & dir.exists(output_dir)){ 
+  if(class(output_dir)!="logical"){ 
     output_filename <- file.path(output_dir, "KSEA Kinase Scores.csv")
   } else { 
     output_filename <- "KSEA Kinase Scores.csv" 
-    output_dir <- FALSE
   }
   write.csv(Mean.FC[order(Mean.FC$Kinase.Gene),-ncol(Mean.FC)], file=output_filename, quote=F, row.names=F)
   
